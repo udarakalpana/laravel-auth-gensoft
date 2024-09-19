@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('admin')) {
-            return redirect()->route('admin-dashboard');
+            return redirect()->route('dashboard');
         }
         elseif ($user->hasRole('user')){
             return redirect()->route('user-dashboard');
