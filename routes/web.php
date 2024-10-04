@@ -28,7 +28,7 @@ Route::middleware(['auth','role:admin'])->group(function () {
 
     Route::get('/create-question', [QuestionController::class, 'createQuestion'])->name('create-question');
     Route::post('/add-question', [QuestionController::class, 'storeQuestion'])->name('add-question');
-
+    Route::get('/edit-question/{questionId}', [QuestionController::class, 'editQuestion'])->name('edit-question');
 });
 
 Route::middleware(['auth','role:user'])->group(function () {

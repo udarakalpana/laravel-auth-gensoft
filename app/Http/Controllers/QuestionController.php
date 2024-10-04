@@ -8,6 +8,7 @@ use App\Models\Question;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
@@ -17,7 +18,7 @@ class QuestionController extends Controller
         return view('admin.question.create');
     }
 
-    public function storeQuestion(QuestionRequest $request)
+    public function storeQuestion(QuestionRequest $request): RedirectResponse
     {
        $validatedQuestionRequest = $request->validated();
 
@@ -46,5 +47,26 @@ class QuestionController extends Controller
 
         return redirect()->route('dashboard');
 
+    }
+
+    public function editQuestion(string $questionId): View|Factory|Application
+    {
+        $question = Question::with('answers')->findOrFail($questionId);
+
+        $answer1 = $question->answers[0]->answer;
+        $answer2 = $question->answers[1]->answer;
+        $answer3 = $question->answers[2]->answer;
+        $answer4 = $question->answers[3]->answer;
+
+        $allQuestionsAndRelatedAnswers = [
+            'question' => $question,
+            'correct_answer' => $question->correct_answer,
+            'answer1' => $answer1,
+            'answer2' => $answer2,
+            'answer3' => $answer3,
+            'answer4' => $answer4,
+        ];
+
+        return view('admin.question.update')->with($allQuestionsAndRelatedAnswers);
     }
 }
