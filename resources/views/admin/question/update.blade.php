@@ -8,8 +8,9 @@
     <div class="max-w-7xl mx-auto mt-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
-                <form class="w-3/4" method="POST" action="{{route('add-question')}}">
+                <form class="w-3/4" method="POST" action="{{route('update-question', [$question->id])}}">
                     @csrf
+                    @method('PUT')
                     <div class="mb-5">
                         <label for="question" class="label">Question</label>
                         <input type="text" id="question" name="question" value="{{$question->question}}" class="text-input" required />

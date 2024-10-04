@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Action\Admin\UpdateQuestion;
 use App\Http\Requests\Question\QuestionRequest;
 use App\Models\Answer;
 use App\Models\Question;
@@ -68,5 +69,21 @@ class QuestionController extends Controller
         ];
 
         return view('admin.question.update')->with($allQuestionsAndRelatedAnswers);
+    }
+
+    public function updateQuestion(
+        string $questionId,
+        QuestionRequest $request,
+        UpdateQuestion $updateQuestion
+    ): RedirectResponse
+    {
+        $validatedUpdateQuestionRequest = $request->validated();
+
+        if ($validatedUpdateQuestionRequest) {
+            $updateQuestion($questionId, $validatedUpdateQuestionRequest);
+        }
+
+        return redirect()->route('dashboard');
+
     }
 }
