@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,9 +35,7 @@ Route::middleware(['auth','role:admin'])->group(function () {
 });
 
 Route::middleware(['auth','role:user'])->group(function () {
-    Route::get('/user/dashboard', function () {
-        return 'this is user dashboard';
-    })->name('user-dashboard');
+    Route::get('/user/dashboard', [UserController::class, 'showUserDashboard'])->name('user-dashboard');
 });
 
 require __DIR__.'/auth.php';
