@@ -14,7 +14,9 @@
                     <div
                         class="max-w-sm p-6 ml-4 mb-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
 
-                        <form action="">
+                        <form action="{{route('answer-for-question', [$question->id])}}" method="POST">
+
+                            @csrf
 
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 {{$question->question}}
@@ -29,7 +31,7 @@
 
 
 
-                            <button type="submit" class="blue-btn">
+                            <button type="submit" class="blue-btn mt-4">
                                 Answer
                             </button>
 

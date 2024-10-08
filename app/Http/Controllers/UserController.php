@@ -16,4 +16,9 @@ class UserController extends Controller
 
         return view('user.dashboard')->with('questions', $questions);
     }
+
+    public function answerForQuestion(string $questionId, Request $request)
+    {
+        dd($questionId, $request->all());
+    }
 }
