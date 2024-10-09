@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Action\Admin\UpdateQuestion;
-use App\Http\Requests\Question\QuestionRequest;
 use App\Models\Answer;
 use App\Models\Question;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
+use App\Action\Admin\UpdateQuestion;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Foundation\Application;
+use App\Http\Requests\Question\QuestionRequest;
 
 class QuestionController extends Controller
 {
@@ -21,16 +20,16 @@ class QuestionController extends Controller
 
     public function storeQuestion(QuestionRequest $request): RedirectResponse
     {
-       $validatedQuestionRequest = $request->validated();
+        $validatedQuestionRequest = $request->validated();
 
-       $question = Question::create([
-           'question' => $validatedQuestionRequest['question'],
-           'correct_answer' => $validatedQuestionRequest['correct'],
-       ]);
+        $question = Question::create([
+            'question' => $validatedQuestionRequest['question'],
+            'correct_answer' => $validatedQuestionRequest['correct'],
+        ]);
 
-       if (!$question) {
-           return redirect()->route('dashboard');
-       }
+        if (! $question) {
+            return redirect()->route('dashboard');
+        }
 
         $answers = [
             'answer1' => $validatedQuestionRequest['answer1'],
@@ -40,14 +39,13 @@ class QuestionController extends Controller
         ];
 
         foreach ($answers as $answer) {
-           Answer::create([
-               'question_id' => $question->id,
-               'answer' => $answer
-           ]);
-       }
+            Answer::create([
+                'question_id' => $question->id,
+                'answer' => $answer,
+            ]);
+        }
 
         return redirect()->route('dashboard');
-
     }
 
     public function editQuestion(string $questionId): View|Factory|Application
@@ -75,8 +73,7 @@ class QuestionController extends Controller
         string $questionId,
         QuestionRequest $request,
         UpdateQuestion $updateQuestion
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $validatedUpdateQuestionRequest = $request->validated();
 
         if ($validatedUpdateQuestionRequest) {
@@ -84,9 +81,7 @@ class QuestionController extends Controller
         }
 
         return redirect()->route('dashboard');
-
     }
-
 
     public function deleteQuestion(string $questionId)
     {

@@ -3,10 +3,10 @@
 namespace App\Action\Admin;
 
 use App\Models\Question;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\RedirectResponse;
 
 class UpdateQuestion
 {
@@ -21,22 +21,19 @@ class UpdateQuestion
                     'correct_answer' => $validatedUpdateQuestionRequest['correct'],
                 ]);
 
-
                 $answersFromRequest = $this->getAnswersFromUpdateRequest($validatedUpdateQuestionRequest);
-
 
                 $alreadyExistingAnswers = $question->answers()->get();
 
                 $alreadyExistingAnswers->each(function ($answer, $index) use ($answersFromRequest) {
                     $answer->update($answersFromRequest[$index]);
                 });
-
             });
 
             return redirect()->route('dashboard');
-        }
-        catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             Log::error($exception->getMessage());
+
             return redirect()->route('dashboard')->withErrors('Failed to update question');
         }
     }
@@ -44,7 +41,6 @@ class UpdateQuestion
     public function getAnswersFromUpdateRequest(array $validatedUpdateQuestionRequest): Collection
     {
         return collect(range(1, 4))->map(function ($number) use ($validatedUpdateQuestionRequest) {
-
             return ['answer' => $validatedUpdateQuestionRequest["answer{$number}"]];
         });
     }

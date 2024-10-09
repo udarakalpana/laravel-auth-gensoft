@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Question extends Model
 {
@@ -14,7 +14,7 @@ class Question extends Model
 
     protected $fillable = [
         'question',
-        'correct_answer'
+        'correct_answer',
     ];
 
     public function answers(): HasMany

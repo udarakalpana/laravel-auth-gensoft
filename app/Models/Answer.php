@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Answer extends Model
 {
@@ -14,7 +14,7 @@ class Answer extends Model
 
     protected $fillable = [
         'question_id',
-        'answer'
+        'answer',
     ];
 
     public function questions(): BelongsTo
