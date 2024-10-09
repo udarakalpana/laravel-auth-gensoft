@@ -2,18 +2,28 @@
 
 namespace App\Action\Admin;
 
+use App\Helper\AnswersHelper;
 use App\Models\Question;
-use Illuminate\Support\Collection;
+use App\Structure\AnswerExtractorInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Service\Question\GetQuestion;
 use Illuminate\Http\RedirectResponse;
 
 class UpdateQuestion
 {
-    public function __invoke(string $questionId, array $validatedUpdateQuestionRequest): RedirectResponse
+    protected AnswerExtractorInterface $answerExtractor;
+
+    public function __construct(AnswerExtractorInterface $answerExtractor)
+    {
+        $this->answerExtractor = $answerExtractor;
+    }
+    public function UpdateQuestion(string $questionId, array $validatedUpdateQuestionRequest): RedirectResponse
     {
         try {
             DB::transaction(function () use ($questionId, $validatedUpdateQuestionRequest) {
+//                $question = GetQuestion::getQuestionByQuestionId($questionId);
+
                 $question = Question::findOrFail($questionId);
 
                 $question->update([
@@ -21,12 +31,12 @@ class UpdateQuestion
                     'correct_answer' => $validatedUpdateQuestionRequest['correct'],
                 ]);
 
-                $answersFromRequest = $this->getAnswersFromUpdateRequest($validatedUpdateQuestionRequest);
+                $extractedAnswers = $this->answerExtractor->extractAnswers($validatedUpdateQuestionRequest);
 
                 $alreadyExistingAnswers = $question->answers()->get();
 
-                $alreadyExistingAnswers->each(function ($answer, $index) use ($answersFromRequest) {
-                    $answer->update($answersFromRequest[$index]);
+                $alreadyExistingAnswers->each(function ($answer, $index) use ($extractedAnswers) {
+                    $answer->update($extractedAnswers[$index]);
                 });
             });
 
@@ -36,12 +46,5 @@ class UpdateQuestion
 
             return redirect()->route('dashboard')->withErrors('Failed to update question');
         }
-    }
-
-    public function getAnswersFromUpdateRequest(array $validatedUpdateQuestionRequest): Collection
-    {
-        return collect(range(1, 4))->map(function ($number) use ($validatedUpdateQuestionRequest) {
-            return ['answer' => $validatedUpdateQuestionRequest["answer{$number}"]];
-        });
     }
 }

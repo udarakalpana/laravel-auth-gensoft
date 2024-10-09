@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Contracts\View\View;
+use App\Action\Admin\CreateQuestion;
 use App\Action\Admin\UpdateQuestion;
+use App\Service\Question\GetQuestion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Application;
@@ -18,31 +19,12 @@ class QuestionController extends Controller
         return view('admin.question.create');
     }
 
-    public function storeQuestion(QuestionRequest $request): RedirectResponse
+    public function storeQuestion(QuestionRequest $request, CreateQuestion $createQuestion): RedirectResponse
     {
         $validatedQuestionRequest = $request->validated();
 
-        $question = Question::create([
-            'question' => $validatedQuestionRequest['question'],
-            'correct_answer' => $validatedQuestionRequest['correct'],
-        ]);
-
-        if (! $question) {
-            return redirect()->route('dashboard');
-        }
-
-        $answers = [
-            'answer1' => $validatedQuestionRequest['answer1'],
-            'answer2' => $validatedQuestionRequest['answer2'],
-            'answer3' => $validatedQuestionRequest['answer3'],
-            'answer4' => $validatedQuestionRequest['answer4'],
-        ];
-
-        foreach ($answers as $answer) {
-            Answer::create([
-                'question_id' => $question->id,
-                'answer' => $answer,
-            ]);
+        if ($validatedQuestionRequest) {
+            $createQuestion->createQuestionAndAnswers($validatedQuestionRequest);
         }
 
         return redirect()->route('dashboard');
@@ -77,15 +59,15 @@ class QuestionController extends Controller
         $validatedUpdateQuestionRequest = $request->validated();
 
         if ($validatedUpdateQuestionRequest) {
-            $updateQuestion($questionId, $validatedUpdateQuestionRequest);
+            $updateQuestion->UpdateQuestion($questionId, $validatedUpdateQuestionRequest);
         }
 
         return redirect()->route('dashboard');
     }
 
-    public function deleteQuestion(string $questionId)
+    public function deleteQuestion(string $questionId): RedirectResponse
     {
-        $question = Question::findOrFail($questionId);
+        $question = GetQuestion::getQuestionByQuestionId($questionId);
 
         $question->delete();
 

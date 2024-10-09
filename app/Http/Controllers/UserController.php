@@ -6,6 +6,7 @@ use App\Models\Question;
 use App\Models\UserAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
+use App\Service\Question\GetQuestion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Application;
@@ -41,7 +42,7 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $question = Question::findOrFail($questionId);
+        $question = GetQuestion::getQuestionByQuestionId($questionId);
 
         $isCorrect = trim($validatedAnswerRequest['answer']) === trim($question->correct_answer);
 
