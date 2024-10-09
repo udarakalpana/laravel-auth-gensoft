@@ -6,17 +6,31 @@ use App\Models\Question;
 use App\Models\UserAnswer;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function showUserDashboard(): View|Factory|Application
+    public function showUserDashboard(Request $request): View|Factory|Application
     {
-        $questions = Question::with('answers')->get();
+        $authenticatedUser = $request->user();
 
-        return view('user.dashboard')->with('questions', $questions);
+        $unAnswerQuestions = Question::with('answers')->whereDoesntHave('userAnswers', function (Builder $query) use ($authenticatedUser) {
+            $query->where('user_id', $authenticatedUser->id);
+        })->get();
+
+        $totalQuestionsCount = Question::count();
+
+        $totalCorrectAnswerCount = UserAnswer::where('user_id', $authenticatedUser->id)
+            ->where('is_correct', true)->count();
+
+        return view('user.dashboard')->with([
+            'questions' => $unAnswerQuestions,
+            'totalQuestionsCount' => $totalQuestionsCount,
+            'totalCorrectAnswerCount' => $totalCorrectAnswerCount,
+        ]);
     }
 
     public function answerForQuestion(string $questionId, Request $request): RedirectResponse
