@@ -2,13 +2,12 @@
 
 namespace App\Action\Admin;
 
-use App\Helper\AnswersHelper;
 use App\Models\Question;
-use App\Structure\AnswerExtractorInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Service\Question\GetQuestion;
 use Illuminate\Http\RedirectResponse;
+use App\Structure\AnswerExtractorInterface;
 
 class UpdateQuestion
 {
@@ -18,6 +17,7 @@ class UpdateQuestion
     {
         $this->answerExtractor = $answerExtractor;
     }
+
     public function UpdateQuestion(string $questionId, array $validatedUpdateQuestionRequest): RedirectResponse
     {
         try {

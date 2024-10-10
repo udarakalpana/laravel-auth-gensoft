@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Action\Admin\CreateQuestionAndAnswersById;
 use App\Models\Question;
 use Illuminate\Contracts\View\View;
 use App\Action\Admin\CreateQuestion;
@@ -30,23 +31,14 @@ class QuestionController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function editQuestion(string $questionId): View|Factory|Application
+    public function editQuestion(
+        string $questionId,
+        CreateQuestionAndAnswersById $createQuestionAndAnswersById
+    ): View|Factory|Application
     {
         $question = Question::with('answers')->findOrFail($questionId);
 
-        $answer1 = $question->answers[0]->answer;
-        $answer2 = $question->answers[1]->answer;
-        $answer3 = $question->answers[2]->answer;
-        $answer4 = $question->answers[3]->answer;
-
-        $allQuestionsAndRelatedAnswers = [
-            'question' => $question,
-            'correct_answer' => $question->correct_answer,
-            'answer1' => $answer1,
-            'answer2' => $answer2,
-            'answer3' => $answer3,
-            'answer4' => $answer4,
-        ];
+        $allQuestionsAndRelatedAnswers = $createQuestionAndAnswersById($question);
 
         return view('admin.question.update')->with($allQuestionsAndRelatedAnswers);
     }
